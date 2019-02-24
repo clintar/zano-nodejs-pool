@@ -109,15 +109,15 @@
     "item": "address",
     "item_value": "127.0.0.1",
     "item_type": "string",
-    "Item_desc": "Monero Daemon RPC IP"
+    "Item_desc": "Zano Daemon RPC IP"
   },
   {
     "id": 16,
     "module": "daemon",
     "item": "port",
-    "item_value": "18081",
+    "item_value": "11211",
     "item_type": "int",
-    "Item_desc": "Monero Daemon RPC Port"
+    "Item_desc": "Zano Daemon RPC Port"
   },
   {
     "id": 17,
@@ -125,15 +125,15 @@
     "item": "address",
     "item_value": "127.0.0.1",
     "item_type": "string",
-    "Item_desc": "Monero Daemon RPC Wallet IP"
+    "Item_desc": "Zano Daemon RPC Wallet IP"
   },
   {
     "id": 18,
     "module": "wallet",
     "item": "port",
-    "item_value": "37458",
+    "item_value": "11211",
     "item_type": "int",
-    "Item_desc": "Monero Daemon RPC Wallet Port"
+    "Item_desc": "Zano Daemon RPC Wallet Port"
   },
   {
     "id": 21,
