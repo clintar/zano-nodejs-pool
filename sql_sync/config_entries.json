@@ -147,7 +147,7 @@
     "id": 22,
     "module": "pool",
     "item": "maxDifficulty",
-    "item_value": "500000",
+    "item_value": "50000000000",
     "item_type": "int",
     "Item_desc": "Maximum difficulty for VarDiff"
   },
@@ -155,7 +155,7 @@
     "id": 23,
     "module": "pool",
     "item": "minDifficulty",
-    "item_value": "100",
+    "item_value": "1000",
     "item_type": "int",
     "Item_desc": "Minimum difficulty for VarDiff"
   },
