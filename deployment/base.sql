@@ -32,7 +32,7 @@ CREATE TABLE `block_log` (
   `hex` varchar(128) NOT NULL,
   `find_time` timestamp NULL DEFAULT NULL,
   `reward` bigint(20) DEFAULT NULL,
-  `difficulty` bigint(20) DEFAULT NULL,
+  `difficulty` varchar(40) DEFAULT NULL,
   `major_version` int(11) DEFAULT NULL,
   `minor_version` int(11) DEFAULT NULL,
   PRIMARY KEY (`hex`),
