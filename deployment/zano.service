@@ -1,0 +1,13 @@
+[Unit]
+Description=Zano Daemon
+After=network.target
+
+[Service]
+Type=forking
+GuessMainPID=no
+ExecStart=/usr/local/src/zano/build/release/src/zanod --rpc-bind-ip 127.0.0.1
+Restart=always
+User=zanodaemon
+
+[Install]
+WantedBy=multi-user.target
