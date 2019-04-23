@@ -31,11 +31,7 @@ sudo mkdir build
 sudo cd build
 sudo cmake ..
 sudo make -j$(nproc)
-sudo cp ~/zano-nodejs-pool/deployment/zano.service /lib/systemd/system/
-sudo useradd -m zanodaemon -d /home/zanodaemon
-sudo systemctl daemon-reload
-sudo systemctl enable zano
-sudo systemctl start zano
+sudo screen -S zano -dm bash -c "/usr/local/src/zano/build/release/src/zanod"
 curl -o- https://raw.githubusercontent.com/creationix/nvm/v0.33.0/install.sh | bash
 source ~/.nvm/nvm.sh
 nvm install v8.9.3
@@ -55,7 +51,7 @@ cd build
 sudo ln -s `pwd` /var/www
 CADDY_DOWNLOAD_DIR=$(mktemp -d)
 cd $CADDY_DOWNLOAD_DIR
-curl -sL "https://snipanet.com/caddy.tar.gz" | tar -xz caddy init/linux-systemd/caddy.service
+curl -sL "https://github.com/mholt/caddy/releases/download/v0.11.4/caddy_v0.11.4_linux_amd64.tar.gz" | tar -xz caddy init/linux-systemd/caddy.service
 sudo mv caddy /usr/local/bin
 sudo chown root:root /usr/local/bin/caddy
 sudo chmod 755 /usr/local/bin/caddy
