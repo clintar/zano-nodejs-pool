@@ -131,7 +131,7 @@
     "id": 18,
     "module": "wallet",
     "item": "port",
-    "item_value": "11211",
+    "item_value": "11212",
     "item_type": "int",
     "Item_desc": "Zano Daemon RPC Wallet Port"
   },
