@@ -10,15 +10,18 @@ ROOT_SQL_PASS=$(cat /dev/urandom | tr -dc 'a-zA-Z0-9' | fold -w 32 | head -n 1)
 CURUSER=$(whoami)
 SERVER_URL=$(dig +short myip.opendns.com @resolver1.opendns.com)
 API_URL="http://$SERVER_URL:8000/leafApi"
-read -sp "Enter a pool API URL or leave it blank for default ($API_URL): " USER_API
+WALLET_PASSWORD=`cat /dev/urandom | tr -dc 'a-zA-Z0-9' | fold -w 32 | head -n 1`
+read -p "Enter a pool API URL or leave it blank for default ($API_URL): " USER_API
+printf "\n"
 if [[ ! -z $USER_API  ]]; then
     API_URL=$USER_API
 fi
-read -sp "Enter a pool wallet address:" POOL_WALLET
-read -sp "Enter a pool fee wallet address:" POOL_FEE_WALLET
-read -sp "Enter a Mailgun key:" MAILGUN_KEY
-read -sp "Enter a Mailgun URL:" MAILGUN_URL
-read -sp "Enter an address for outgoing emails:" EMAIL_FROM
+read -p "Enter a Mailgun key:" MAILGUN_KEY
+printf "\n"
+read -p "Enter a Mailgun URL:" MAILGUN_URL
+printf "\n"
+read -p "Enter an address for outgoing emails:" EMAIL_FROM
+printf "\n"
 sudo timedatectl set-timezone Etc/UTC
 sudo apt-get update
 sudo DEBIAN_FRONTEND=noninteractive apt-get -y upgrade
@@ -35,14 +38,22 @@ sudo mv libg* /usr/lib/
 cd ~
 sudo systemctl enable ntp
 cd /usr/local/src
-sudo git clone https://github.com/hyle-team/zano.git
+sudo git clone --recursive https://github.com/hyle-team/zano.git
 cd zano
 sudo git checkout master
 sudo mkdir build
 sudo cd build
 sudo cmake ..
 sudo make -j$(nproc)
+cd ~
+export LC_ALL=C
+unset LANGUAGE
+POOL_WALLET=`/usr/local/src/zano/build/release/src/simplewallet --generate-new-wallet "/home/$CURUSER/zano.wallet" --password "$WALLET_PASSWORD" | grep "Generated new wallet" | awk '{ print $4 }'`
+echo "$WALLET_PASSWORD" > "/home/$CURUSER/zano.wallet.passwd"
+echo "Generated a new wallet $POOL_WALLET in /home/$CURUSER/zano.wallet with the password in /home/$CURUSER/zano.wallet.passwd."
+echo "!!! PLEASE BACK IT UP !!!"
 sudo screen -S zano -dm bash -c "/usr/local/src/zano/build/release/src/zanod"
+sudo screen -S simplewallet -dm bash -c "/usr/local/src/zano/build/release/src/simplewallet --wallet-file /home/$CURUSER/zano.wallet --password `cat /home/$CURUSER/zano.wallet.passwd` --rpc-bind-port 11212"
 curl -o- https://raw.githubusercontent.com/creationix/nvm/v0.33.0/install.sh | bash
 source ~/.nvm/nvm.sh
 nvm install v8.9.3
@@ -52,10 +63,7 @@ npm install -g pm2
 openssl req -subj "/C=IT/ST=Pool/L=Daemon/O=Mining Pool/CN=mining.pool" -newkey rsa:2048 -nodes -keyout cert.key -x509 -out cert.pem -days 36500
 mkdir ~/pool_db/
 cp config_example.json config.json
-sed -r "s/(\"db_storage_path\": ).*/\1\"\/home\/$CURUSER\/pool_db\/\",/" config.json > config.json
-sed -r "s/(\"bind_ip\": ).*/\1\"$SERVER_URL\/\",/" config.json > config.json
-sed -r "s/(\"hostname\": ).*/\1\"$SERVER_URL\/\",/" config.json > config.json
-sed -r "s/(\"address\": ).*/\1\"$POOL_WALLET\/\",/" config.json > config.json
+sed -r "s/(\"db_storage_path\": ).*/\1\"\/home\/$CURUSER\/pool_db\/\",/ ; s/(\"bind_ip\": ).*/\1\"$SERVER_URL\",/ ; s/(\"hostname\": ).*/\1\"$SERVER_URL\",/" config_example.json > config.json
 cd ~/zano-nodejs-pool/frontend
 npm install
 ./node_modules/bower/bin/bower update
@@ -96,7 +104,7 @@ mysql -u root --password=$ROOT_SQL_PASS < deployment/base.sql
 mysql -u root --password=$ROOT_SQL_PASS pool -e "INSERT INTO pool.config (module, item, item_value, item_type, Item_desc) VALUES ('api', 'authKey', '`cat /dev/urandom | tr -dc 'a-zA-Z0-9' | fold -w 32 | head -n 1`', 'string', 'Auth key sent with all Websocket frames for validation.')"
 mysql -u root --password=$ROOT_SQL_PASS pool -e "INSERT INTO pool.config (module, item, item_value, item_type, Item_desc) VALUES ('api', 'secKey', '`cat /dev/urandom | tr -dc 'a-zA-Z0-9' | fold -w 32 | head -n 1`', 'string', 'HMAC key for Passwords.  JWT Secret Key.  Changing this will invalidate all current logins.')"
 mysql -u root --password=$ROOT_SQL_PASS pool -e "UPDATE pool.config SET item_value = '$POOL_WALLET' WHERE module = 'pool' and item = 'address';"
-mysql -u root --password=$ROOT_SQL_PASS pool -e "UPDATE pool.config SET item_value = '$POOL_FEE_WALLET' WHERE module = 'payout' and item = 'feeAddress';"
+mysql -u root --password=$ROOT_SQL_PASS pool -e "UPDATE pool.config SET item_value = '$POOL_WALLET' WHERE module = 'payout' and item = 'feeAddress';"
 mysql -u root --password=$ROOT_SQL_PASS pool -e "UPDATE pool.config SET item_value = '$API_URL' WHERE module = 'general' and item = 'shareHost';"
 mysql -u root --password=$ROOT_SQL_PASS pool -e "UPDATE pool.config SET item_value = '$MAILGUN_KEY' WHERE module = 'general' and item = 'mailgunKey';"
 mysql -u root --password=$ROOT_SQL_PASS pool -e "UPDATE pool.config SET item_value = '$MAILGUN_URL' WHERE module = 'general' and item = 'mailgunURL';"
@@ -106,3 +114,4 @@ bash ~/zano-nodejs-pool/deployment/install_lmdb_tools.sh
 cd ~/zano-nodejs-pool/sql_sync/
 env PATH=$PATH:`pwd`/.nvm/versions/node/v8.9.3/bin node sql_sync.js
 echo "You're setup!  Please read the rest of the readme for the remainder of your setup and configuration.  These steps include: Setting your Fee Address, Pool Address, Global Domain, and the Mailgun setup!"
+echo "!!! DO NOT FORGET TO BACK UP THE GENERATED WALLET AND ITS PASSWORD !!!"
