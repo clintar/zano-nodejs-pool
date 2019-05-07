@@ -8,6 +8,17 @@ if [[ `whoami` == "root" ]]; then
 fi
 ROOT_SQL_PASS=$(cat /dev/urandom | tr -dc 'a-zA-Z0-9' | fold -w 32 | head -n 1)
 CURUSER=$(whoami)
+SERVER_URL=$(dig +short myip.opendns.com @resolver1.opendns.com)
+API_URL="http://$SERVER_URL:8000/leafApi"
+read -sp "Enter a pool API URL or leave it blank for default ($API_URL): " USER_API
+if [[ ! -z $USER_API  ]]; then
+    API_URL=$USER_API
+fi
+read -sp "Enter a pool wallet address:" POOL_WALLET
+read -sp "Enter a pool fee wallet address:" POOL_FEE_WALLET
+read -sp "Enter a Mailgun key:" MAILGUN_KEY
+read -sp "Enter a Mailgun URL:" MAILGUN_URL
+read -sp "Enter an address for outgoing emails:" EMAIL_FROM
 sudo timedatectl set-timezone Etc/UTC
 sudo apt-get update
 sudo DEBIAN_FRONTEND=noninteractive apt-get -y upgrade
@@ -40,7 +51,11 @@ npm install
 npm install -g pm2
 openssl req -subj "/C=IT/ST=Pool/L=Daemon/O=Mining Pool/CN=mining.pool" -newkey rsa:2048 -nodes -keyout cert.key -x509 -out cert.pem -days 36500
 mkdir ~/pool_db/
-sed -r "s/(\"db_storage_path\": ).*/\1\"\/home\/$CURUSER\/pool_db\/\",/" config_example.json > config.json
+cp config_example.json config.json
+sed -r "s/(\"db_storage_path\": ).*/\1\"\/home\/$CURUSER\/pool_db\/\",/" config.json > config.json
+sed -r "s/(\"bind_ip\": ).*/\1\"$SERVER_URL\/\",/" config.json > config.json
+sed -r "s/(\"hostname\": ).*/\1\"$SERVER_URL\/\",/" config.json > config.json
+sed -r "s/(\"address\": ).*/\1\"$POOL_WALLET\/\",/" config.json > config.json
 cd ~/zano-nodejs-pool/frontend
 npm install
 ./node_modules/bower/bin/bower update
@@ -80,6 +95,12 @@ pm2 install pm2-logrotate &
 mysql -u root --password=$ROOT_SQL_PASS < deployment/base.sql
 mysql -u root --password=$ROOT_SQL_PASS pool -e "INSERT INTO pool.config (module, item, item_value, item_type, Item_desc) VALUES ('api', 'authKey', '`cat /dev/urandom | tr -dc 'a-zA-Z0-9' | fold -w 32 | head -n 1`', 'string', 'Auth key sent with all Websocket frames for validation.')"
 mysql -u root --password=$ROOT_SQL_PASS pool -e "INSERT INTO pool.config (module, item, item_value, item_type, Item_desc) VALUES ('api', 'secKey', '`cat /dev/urandom | tr -dc 'a-zA-Z0-9' | fold -w 32 | head -n 1`', 'string', 'HMAC key for Passwords.  JWT Secret Key.  Changing this will invalidate all current logins.')"
+mysql -u root --password=$ROOT_SQL_PASS pool -e "UPDATE pool.config SET item_value = '$POOL_WALLET' WHERE module = 'pool' and item = 'address';"
+mysql -u root --password=$ROOT_SQL_PASS pool -e "UPDATE pool.config SET item_value = '$POOL_FEE_WALLET' WHERE module = 'payout' and item = 'feeAddress';"
+mysql -u root --password=$ROOT_SQL_PASS pool -e "UPDATE pool.config SET item_value = '$API_URL' WHERE module = 'general' and item = 'shareHost';"
+mysql -u root --password=$ROOT_SQL_PASS pool -e "UPDATE pool.config SET item_value = '$MAILGUN_KEY' WHERE module = 'general' and item = 'mailgunKey';"
+mysql -u root --password=$ROOT_SQL_PASS pool -e "UPDATE pool.config SET item_value = '$MAILGUN_URL' WHERE module = 'general' and item = 'mailgunURL';"
+mysql -u root --password=$ROOT_SQL_PASS pool -e "UPDATE pool.config SET item_value = '$EMAIL_FROM' WHERE module = 'general' and item = 'emailFrom';"
 pm2 start init.js --name=api --log-date-format="YYYY-MM-DD HH:mm Z" -- --module=api
 bash ~/zano-nodejs-pool/deployment/install_lmdb_tools.sh
 cd ~/zano-nodejs-pool/sql_sync/
