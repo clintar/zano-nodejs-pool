@@ -28,7 +28,7 @@ app.controller('GettingStartedCtrl', function($scope, $mdDialog, dataService) {
 	{
 		type: 'Username',
 		sample: '43To46Y9AxNFkY5rsMQaLwbRNaxLZVvc4LJZt7Cx9Dt23frL6aut2uC3PsMiwGY5C5fKLSn6sWyoxRQTK1dhdBpKAX8bsUW',
-		desc: 'Standard address for withdraws to a wallet (CLI/GUI/MyMonero)',
+		desc: 'Standard address for withdraws to a wallet (CLI/GUI)',
 		valid: true
 	},
 	{
@@ -70,7 +70,7 @@ app.controller('GettingStartedCtrl', function($scope, $mdDialog, dataService) {
 	{
 		type: 'Username',
 		sample: '43To46Y9AxNFkY5rsMQaLwbRNaxLZVvc4LJZt7Cx9Dt23frL6aut2uC3PsMiwGY5C5fKLSn6sWyoxRQTK1dhdBpKAX8bsUW.6FEBAC2C05EDABB16E451D824894CC48AE8B645A48BD4C4F21A1CC8624EB0E6F+23472',
-		desc: 'Standard exchange withdrawl w/ fixed diff (Good for NiceHash)',
+		desc: 'Standard exchange withdrawal w/ fixed diff (Good for NiceHash)',
 		valid: true
 	},
 	{

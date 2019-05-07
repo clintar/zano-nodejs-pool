@@ -18,26 +18,12 @@ app.controller('FAQCtrl', function($scope, $location, $anchorScroll, $sce, dataS
     $scope.faq = {
         "General" : [
         {
-            title: "What is Monero?",
-            answer: $sce.trustAsHtml("Monero is a cryptocurrency that promises untraceability and privacy. It accomplishes this by obfuscating and encrypting transactions beyond recognition, while allowing you to discreetly view and manage your assets. You can also prove your transactions to a third party if necessary.<br/>"),
-            media:
-            // {
-            //     "title": "Simple",
-            //     "url": $sce.trustAsResourceUrl("https://www.youtube.com/embed/TZi9xx6aiuY?ecver=1")
-            // }
-            {
-                "title": "Monero essentials video",
-                "url": $sce.trustAsResourceUrl("https://www.youtube.com/embed/6DQb0cMvU7I?ecver=1")
-            }
-        },
-
-        {
             title: "What is mining and why should I be interested?",
             answer: $sce.trustAsHtml("Cryptocurrencies achieve decentralisation via a process called mining. When new transactions are created, they need to be validated. Miners compete with each other to validate a group of transactions(a.k.a. block). The winning miner is paid a block reward and collects transaction fees for the work carried out. Block rewards are also how new coins are generated and help regulate the economy of the currency.")
         },
         {
             title: "How do I start mining?",
-            answer: $sce.trustAsHtml("You can start mining today if you have a computer that sits idle. Monero can be mined on CPUs, GPU's or even a raspberry PI. To start mining you need to find the right mining software for your hardware and get going.<br/><br/>Read <a hred='#/help/getting_started'>Getting Started</a> for more details.")
+            answer: $sce.trustAsHtml("You can start mining today if you have a computer that sits idle. Zano can be mined on CPUs, GPU's or even a raspberry PI. To start mining you need to find the right mining software for your hardware and get going.<br/><br/>Read <a hred='#/help/getting_started'>Getting Started</a> for more details.")
         },
         {
             title: "What is pool mining?",
@@ -63,11 +49,11 @@ app.controller('FAQCtrl', function($scope, $location, $anchorScroll, $sce, dataS
         },
         {
             title: "Payout thresholds?",
-            answer: $sce.trustAsHtml("Payout threshold is the minimum amount that needs to be earned before the pool pays out to your wallet. Since transactions in Monero have a significant miner fees, it's cost effective to set a higher payout threshold for your pool. The minimum value for this is usually 0.3 XMR.<br/><br/>To change your payment threshold, click the wrench after you login via \"Login\" button on the top right.<br/><br/>You could also adjust your payout threshold to regulate your payout schedule etc daily/weekly etc depending on your hash rate.")
+            answer: $sce.trustAsHtml("Payout threshold is the minimum amount that needs to be earned before the pool pays out to your wallet. Since transactions in Zano have a significant miner fees, it's cost effective to set a higher payout threshold for your pool. The minimum value for this is usually 0.3 ZANO.<br/><br/>To change your payment threshold, click the wrench after you login via \"Login\" button on the top right.<br/><br/>You could also adjust your payout threshold to regulate your payout schedule etc daily/weekly etc depending on your hash rate.")
         },
           {
             title: "Why hasn't my \"Total Due\" amount increased?",
-            answer: $sce.trustAsHtml("Sometimes, the monero blockchain will take a couple days for a new block to be found. Although you are contributing shares, the pool cannot guarantee your earnings until they are static.")
+            answer: $sce.trustAsHtml("Sometimes, the Zano blockchain will take a couple days for a new block to be found. Although you are contributing shares, the pool cannot guarantee your earnings until they are static.")
           },
         {
             title: "Getting paid in BTC",
@@ -93,7 +79,7 @@ app.controller('FAQCtrl', function($scope, $location, $anchorScroll, $sce, dataS
         "Mining":[
         {
             title: "Hardware?",
-            answer: $sce.trustAsHtml("Monero is an AISC resistant cryptocurrency, that means it should be cost prohibitive to mine monero with an FGPA/AISC allowing desktop grade hardware to keep its share in the network hashrate and earnings.<br/><br/><a href='http://monerobechmarks.byethost5.com/' target='_new'>http://monerobechmarks.byethost5.com/</a> is a list of community collected hashrate results ordered by hardware, but be careful as some entries may not be accurate.")
+            answer: $sce.trustAsHtml("Zano is an AISC resistant cryptocurrency, that means it should be cost prohibitive to mine monero with an FGPA/AISC allowing desktop grade hardware to keep its share in the network hashrate and earnings.<br/><br/><a href='http://monerobechmarks.byethost5.com/' target='_new'>http://monerobechmarks.byethost5.com/</a> is a list of community collected hashrate results ordered by hardware, but be careful as some entries may not be accurate.")
         },
         {
             title: "Software?",
@@ -103,7 +89,7 @@ app.controller('FAQCtrl', function($scope, $location, $anchorScroll, $sce, dataS
         "Support":[
         {
             title: "Chat Support",
-            answer: $sce.trustAsHtml("Monero is an AISC resistant cryptocurrency, that means it should be cost prohibitive to mine monero with an FGPA/AISC allowing desktop grade hardware to keep its share in the network hashrate and earnings.<br/><br/><a href='http://monerobechmarks.byethost5.com/' target='_new'>http://monerobechmarks.byethost5.com/</a> is a list of community collected hashrate results ordered by hardware, but be careful as some entries may not be accurate.")
+            answer: $sce.trustAsHtml("ZANO is an ASIC resistant cryptocurrency, that means it should be cost prohibitive to mine Zano with an FGPA/AISC allowing desktop grade hardware to keep its share in the network hashrate and earnings.<br/><br/><a href='http://monerobechmarks.byethost5.com/' target='_new'>http://monerobechmarks.byethost5.com/</a> is a list of community collected hashrate results ordered by hardware, but be careful as some entries may not be accurate.")
         },
         {
             title: "Interesting links.",

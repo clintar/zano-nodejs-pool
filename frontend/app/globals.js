@@ -4,8 +4,8 @@ angular.module('pool.globals', [])
 
 .factory('GLOBALS', function() {
 	return {
-		pool_name: "XMRPool.net",
-		api_url : 'https://api.xmrpool.net',
+		pool_name: "ZanoPool",
+		api_url : 'http://localhost:8001',
 		api_refresh_interval: 5000
 	};
 });
