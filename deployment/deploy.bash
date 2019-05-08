@@ -8,13 +8,13 @@ if [[ `whoami` == "root" ]]; then
 fi
 ROOT_SQL_PASS=$(cat /dev/urandom | tr -dc 'a-zA-Z0-9' | fold -w 32 | head -n 1)
 CURUSER=$(whoami)
-SERVER_URL=$(dig +short myip.opendns.com @resolver1.opendns.com)
-API_URL="http://$SERVER_URL:8000/leafApi"
+SERVER_IP=$(dig +short myip.opendns.com @resolver1.opendns.com)
+API_URL="http://$SERVER_IP:8000/leafApi"
 WALLET_PASSWORD=`cat /dev/urandom | tr -dc 'a-zA-Z0-9' | fold -w 32 | head -n 1`
-read -p "Enter a pool API URL or leave it blank for default ($API_URL): " USER_API
+read -p "Enter a pool API URL or leave it blank for default ($API_URL): " USER_API_URL
 printf "\n"
-if [[ ! -z $USER_API  ]]; then
-    API_URL=$USER_API
+if [[ ! -z $USER_API_URL  ]]; then
+    API_URL=$USER_API_URL
 fi
 read -p "Enter a Mailgun key:" MAILGUN_KEY
 printf "\n"
@@ -63,7 +63,9 @@ npm install -g pm2
 openssl req -subj "/C=IT/ST=Pool/L=Daemon/O=Mining Pool/CN=mining.pool" -newkey rsa:2048 -nodes -keyout cert.key -x509 -out cert.pem -days 36500
 mkdir ~/pool_db/
 cp config_example.json config.json
-sed -r "s/(\"db_storage_path\": ).*/\1\"\/home\/$CURUSER\/pool_db\/\",/ ; s/(\"bind_ip\": ).*/\1\"$SERVER_URL\",/ ; s/(\"hostname\": ).*/\1\"$SERVER_URL\",/" config_example.json > config.json
+sed -r "s/(\"db_storage_path\": ).*/\1\"\/home\/$CURUSER\/pool_db\/\",/ ; s/(\"bind_ip\": ).*/\1\"$SERVER_IP\",/ ; s/(\"hostname\": ).*/\1\"$SERVER_IP\",/" config_example.json > config.json
+sed -i "s/localhost/$SERVER_IP/g" /home/$CURUSER/zano-nodejs-pool/frontend/app/globals.js
+sed -i "s/localhost/$SERVER_IP/g" /home/$CURUSER/zano-nodejs-pool/frontend/app/globals.default.js
 cd ~/zano-nodejs-pool/frontend
 npm install
 ./node_modules/bower/bin/bower update
@@ -114,4 +116,6 @@ bash ~/zano-nodejs-pool/deployment/install_lmdb_tools.sh
 cd ~/zano-nodejs-pool/sql_sync/
 env PATH=$PATH:`pwd`/.nvm/versions/node/v8.9.3/bin node sql_sync.js
 echo "You're setup!  Please read the rest of the readme for the remainder of your setup and configuration.  These steps include: Setting your Fee Address, Pool Address, Global Domain, and the Mailgun setup!"
+printf "\n"
 echo "!!! DO NOT FORGET TO BACK UP THE GENERATED WALLET AND ITS PASSWORD !!!"
+printf "\n"
