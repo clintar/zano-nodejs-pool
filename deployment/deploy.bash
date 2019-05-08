@@ -111,6 +111,12 @@ mysql -u root --password=$ROOT_SQL_PASS pool -e "UPDATE pool.config SET item_val
 mysql -u root --password=$ROOT_SQL_PASS pool -e "UPDATE pool.config SET item_value = '$MAILGUN_KEY' WHERE module = 'general' and item = 'mailgunKey';"
 mysql -u root --password=$ROOT_SQL_PASS pool -e "UPDATE pool.config SET item_value = '$MAILGUN_URL' WHERE module = 'general' and item = 'mailgunURL';"
 mysql -u root --password=$ROOT_SQL_PASS pool -e "UPDATE pool.config SET item_value = '$EMAIL_FROM' WHERE module = 'general' and item = 'emailFrom';"
+pm2 start init.js --name=blockManager --log-date-format="YYYY-MM-DD HH:mm Z"  -- --module=blockManager
+pm2 start init.js --name=worker --log-date-format="YYYY-MM-DD HH:mm Z" -- --module=worker
+pm2 start init.js --name=payments --log-date-format="YYYY-MM-DD HH:mm Z" -- --module=payments
+pm2 start init.js --name=remoteShare --log-date-format="YYYY-MM-DD HH:mm Z" -- --module=remoteShare
+pm2 start init.js --name=longRunner --log-date-format="YYYY-MM-DD HH:mm Z" -- --module=longRunner
+pm2 start init.js --name=pool --log-date-format="YYYY-MM-DD HH:mm Z" -- --module=pool
 pm2 start init.js --name=api --log-date-format="YYYY-MM-DD HH:mm Z" -- --module=api
 bash ~/zano-nodejs-pool/deployment/install_lmdb_tools.sh
 cd ~/zano-nodejs-pool/sql_sync/
